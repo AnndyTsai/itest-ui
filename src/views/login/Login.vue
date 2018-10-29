@@ -64,10 +64,15 @@
         },
         methods : {
             doLogin(){
-
+                console.log(this.loginUrl);
             },
             doRegister(){
 
+            }
+        },
+        computed : {
+            loginUrl(){
+                return this.$store.getters.LOGIN_URL;
             }
         }
     };
