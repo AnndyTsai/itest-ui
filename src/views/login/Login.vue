@@ -18,8 +18,8 @@
             </el-form-item>
             <el-form-item></el-form-item>
             <el-form-item>
-                <el-button type="primary">Login</el-button>
-                <el-button type="info">Register</el-button>
+                <el-button type="primary" @click="doLogin">Login</el-button>
+                <el-button type="info" @click="doRegister">Register</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -29,6 +29,10 @@
     export default {
         name: 'Login',
         data() {
+            /**
+             * Here is the place where the component's global variable address. Like checkUserName, checkPassword, checkCaptcha.
+             * 定义类似类属变量
+             */
             var checkUserName = (rule, value, callback) => {
                 if(value === '' || value === undefined){
                     callback('Account name cannot be empty!');
@@ -52,18 +56,20 @@
                     role: '',
                 },
                 loginRules: {
-                    userName : [
-                        {validator : checkUserName, required: true, trigger : 'blur'}
-                    ],
-                    password : [
-                        {validator : checkPassword, required: true, trigger : 'blur'}
-                    ],
-                    captcha : [
-                        {validator : checkCaptcha, required: true, trigger : 'blur'}
-                    ]
+                    userName : [{validator : checkUserName, required: true, trigger : 'blur'}],
+                    password : [{validator : checkPassword, required: true, trigger : 'blur'}],
+                    captcha : [{validator : checkCaptcha, required: true, trigger : 'blur'}]
                 },
             };
         },
+        methods : {
+            doLogin(){
+
+            },
+            doRegister(){
+
+            }
+        }
     };
 </script>
 
