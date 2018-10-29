@@ -1,0 +1,25 @@
+@mixin user-select{-webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none;}
+@mixin width-height($w, $h){
+    @if($w != null){width: $w;}
+    @if($h != null){height: $h;}
+}
+@mixin margin-t-r-b-l($t, $r, $b, $l){
+    @if($t != null){margin-top: $t;}
+    @if($r != null){margin-right: $r;}
+    @if($b != null){margin-bottom: $b;}
+    @if($l != null){margin-left: $l;}
+}
+@mixin margin-tb-rl($tb, $rl){
+    @if($tb != null){margin-top: $tb; margin-bottom: $tb;}
+    @if($rl != null){margin-right: $rl; margin-left: $rl;}
+}
+@mixin padding-t-r-b-l($t, $r, $b, $l){
+    @if($t != null){padding-top: $t;}
+    @if($r != null){padding-right: $r;}
+    @if($b != null){padding-bottom: $b;}
+    @if($l != null){padding-left: $l;}
+}
+@mixin padding-tb-rl($tb, $rl){
+    @if($tb != null){padding-top: $tb; padding-bottom: $tb;}
+    @if($rl != null){padding-right: $rl; padding-left: $rl;}
+}
