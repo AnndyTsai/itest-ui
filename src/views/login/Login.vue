@@ -1,31 +1,125 @@
 <template>
-    <div class="login-form">
-        <el-form :model="user" :rules="loginRules" status-icon ref="loginForm" label-width="1rem" class="x-el-form">
-            <el-form-item label=" " prop="userName" class="x-el-item">
-                <el-input v-model="user.userName" placeholder="Please input your account name">
-                    <div slot="prepend" class="fa fa-user-circle fa-lg" style="width: 1rem;"></div>
-                </el-input>
-            </el-form-item>
-            <el-form-item label=" " prop="password" class="x-el-item">
-                <el-input v-model="user.password" placeholder="Please input your account password">
-                    <div slot="prepend" class="fa fa-lock fa-2x" style="width: 1rem;"></div>
-                </el-input>
-            </el-form-item>
-            <el-form-item label=" " prop="captcha" class="x-el-item">
-                <el-input v-model="user.captcha" placeholder="Please input the captcha">
-                    <div slot="prepend" class="fa fa-sign-language fa-lg" style="width: 1rem;"></div>
-                </el-input>
-            </el-form-item>
-            <el-form-item></el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="doLogin">Login</el-button>
-                <el-button type="info" @click="doRegister">Register</el-button>
-            </el-form-item>
-        </el-form>
+    <div class="login-register">
+        <div class="sys-title"></div>
+        <div v-if="isLogin" class="login-form">
+            <div class="x-el-form">
+                <el-form :model="user" :rules="loginRules" status-icon ref="loginForm" label-width="1rem">
+                    <el-form-item label=" " prop="userName" class="x-el-item">
+                        <el-input v-model="user.userName" placeholder="Please input your account name">
+                            <div slot="prepend" class="fa fa-user-circle fa-lg" style="width: 1rem;"></div>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label=" " prop="password" class="x-el-item">
+                        <el-input v-model="user.password" placeholder="Please input your account password">
+                            <div slot="prepend" class="fa fa-lock fa-2x" style="width: 1rem;"></div>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label=" " prop="captcha" class="x-el-item">
+                        <div class="x-el-item-captcha">
+                            <el-input v-model="user.captcha" placeholder="Please input the captcha" style="width: 20rem;">
+                                <div slot="prepend" class="fa fa-sign-language fa-lg" style="width: 1rem;"></div>
+                            </el-input>
+                            <div class="captcha-img">
+                                <canvas id="canvas" @click="refreshCaptcha"></canvas>
+                            </div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item></el-form-item>
+                    <el-form-item>
+                        <el-button type="success" @click="doLogin">Login</el-button>
+                        <el-button type="info" @click="doRegister">Register</el-button>
+                    </el-form-item>
+                </el-form>
+
+            </div>
+        </div>
+        <div v-else class="register-form">
+            <el-form :model="newUser" ref="registerForm" label-width="1rem" status-icon :rules="registerRules">
+                <el-form-item prop="userName">
+                    <el-input v-model="newUser.userName" placeholder="Please choose your ID"></el-input>
+                </el-form-item>
+                <el-form-item prop="email">
+                    <el-input v-model="newUser.email" placeholder="Please set your own valid email"></el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input v-model="newUser.password" placeholder="Please set your password" type="password"></el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                    <el-input v-model="newUser.repeatPassword" placeholder="Please confirm your password" type="password"></el-input>
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
+
 </template>
 
 <script>
+    function getRandomCaptcha(){
+        let captcha = '';
+        for(let count = 0; count < 5; count++){
+            let seed = Math.floor(Math.random() * 10) % 2;
+            let caseSeed = Math.floor(Math.random() * 10) % 2;
+            let numPos = Math.floor(Math.random() * 10);
+            let charPos = Math.floor(Math.random() * 26);
+            let char = String.fromCharCode(seed == 0 ? ('0'.charCodeAt() + numPos) : ((caseSeed == 0 ? 'a'.charCodeAt() : 'A'.charCodeAt()) + charPos));
+            captcha = captcha + char;
+        }
+        return captcha;
+    };
+    function randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    };
+    function randomColor(min, max) {
+        var r = randomNum(min, max);
+        var g = randomNum(min, max);
+        var b = randomNum(min, max);
+        return "rgb(" + r + "," + g + "," + b + ")";
+    }
+    function fillCanvas(captcha) {
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        let cw = canvas.width;
+        let ch = canvas.height;
+
+        ctx.textBaseline = "middle";
+        ctx.fillStyle = randomColor(180, 240);
+        ctx.fillRect(0, 0, cw, ch);
+
+        for(var i = 1; i <= captcha.length; i++) {
+            var txt = captcha[i - 1];
+            ctx.font = '80px Arial';
+            ctx.fillStyle = randomColor(0, 255); //随机生成字体颜色
+            ctx.shadowBlur = randomNum(-3, 3);
+            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+            var x = cw / 6 * i;
+            var y = ch / 2;
+            var deg = randomNum(-30, 30);
+            /**设置旋转角度和坐标原点**/
+            ctx.translate(x, y);
+            ctx.rotate(deg * Math.PI / 180);
+            ctx.fillText(txt, -20, 0);
+            /**恢复旋转角度和坐标原点**/
+            ctx.rotate(-deg * Math.PI / 180);
+            ctx.translate(-x, -y);
+        }
+
+        /**绘制干扰线**/
+        for(var i = 0; i < 4; i++) {
+            ctx.strokeStyle = randomColor(40, 180);
+            ctx.beginPath();
+            ctx.moveTo(randomNum(0, cw/2), randomNum(0, ch/2));
+            ctx.lineTo(randomNum(0, cw/2), randomNum(0, ch));
+            ctx.stroke();
+        }
+        /**绘制干扰点**/
+        for(var i = 0; i < cw/4; i++) {
+            ctx.fillStyle = randomColor(0, 255);
+            ctx.beginPath();
+            ctx.arc(randomNum(0, cw), randomNum(0, ch), 1, 0, 2 * Math.PI);
+            ctx.fill();
+        }
+    }
+
     export default {
         name: 'Login',
         data() {
@@ -36,25 +130,36 @@
             var checkUserName = (rule, value, callback) => {
                 if(value === '' || value === undefined){
                     callback('Account name cannot be empty!');
+                } else {
+                    callback();
                 }
             };
             var checkPassword = (rule, value, callback) => {
                 if(value === '' || value === undefined){
                     callback('Password cannot be empty!');
+                } else {
+                    callback();
                 }
             };
             var checkCaptcha = (rule, value, callback) => {
                 if(value === '' || value === undefined){
                     callback('Captcha cannot be empty!');
+                } else if(value.toLowerCase() != this.captcha.toLowerCase()){
+                    callback('Captcha is wrong, Please check!');
+                } else {
+                    callback();
                 }
             };
+
             return {
+                isLogin : true,
                 user: {
                     userName: '',
                     password: '',
                     captcha: '',
                     role: '',
                 },
+                newUser : {userName : '', password : '', email : '', repeatPassword : ''},
                 loginRules: {
                     userName : [{validator : checkUserName, required: true, trigger : 'blur'}],
                     password : [{validator : checkPassword, required: true, trigger : 'blur'}],
@@ -64,15 +169,33 @@
         },
         methods : {
             doLogin(){
-                console.log(this.loginUrl);
+                this.$refs.loginForm.validate(valid => {
+                    if(valid){
+
+                    } else {
+                        this.$message({message : '请确认必填信息!', type : 'error'})
+                    }
+                })
             },
             doRegister(){
-
+                this.isLogin = false;
+            },
+            refreshCaptcha(){
+                this.$store.dispatch('commitUpdateCaptcha', getRandomCaptcha()).then(() => {}).catch(() => {});
+                fillCanvas(this.captcha);
+                console.log(this.captcha);
             }
+        },
+        mounted(){
+            this.$store.dispatch('commitUpdateCaptcha', getRandomCaptcha()).then(() => {}).catch(() => {});
+            fillCanvas(this.captcha);
         },
         computed : {
             loginUrl(){
                 return this.$store.getters.LOGIN_URL;
+            },
+            captcha(){
+                return this.$store.getters.CAPTCHA;
             }
         }
     };
@@ -81,17 +204,48 @@
 <style lang="scss">
     @import "../../style/main";
     *{@include user-select;}
-    .login-form {
-        @include width-height(35rem, 30rem);
-        @include margin-tb-rl(10%, calc(50% - 15rem));
-        background-color: rgba(65,255,228,0.3);
-        border-radius: 10px;
-        .x-el-form{
-            @include margin-t-r-b-l(5rem, 5rem, 4rem, 5rem);
-            .x-el-item{
-                @include width-height(25rem, null);
+
+    .login-register{
+        @include width-height(10rem, 40rem);
+        @include margin-t-r-b-l(5%, calc(50% - 20rem), null, calc(50% - 20rem));
+        display: flex; flex-direction: column;
+
+        .sys-title{
+            @include width-height(7rem, 7rem);
+            margin-left: 20%;
+            line-height: 4rem;
+            font-size: 3rem;
+            font-family: 隶书;
+            background: url("../../assets/logo-title.jpg");
+            background-size: 100% 100%;
+            border-radius: 7rem;
+            opacity: .4;
+        }
+
+        .login-form {
+            @include width-height(35rem, 20rem);
+            @include margin-tb-rl(2.5rem, 5rem);
+            background-color: rgba(65,255,228,0.3);
+            border-radius: 10px;
+            padding-top: 5rem;
+            .x-el-form{
+                margin-left: 5rem;
+                .x-el-item{
+                    @include width-height(25rem, null);
+                    .x-el-item-captcha{
+                        display: flex; flex-direction: row;
+                        .captcha-img{
+                            margin-left: 1rem;
+                            @include width-height(4rem, 2.5rem);
+                            #canvas{
+                                @include width-height(4rem, 2.5rem);
+                            }
+                        }
+                    }
+                }
             }
         }
+
     }
 
 </style>
