@@ -14,20 +14,18 @@
     @import "style/main";
     html, body{
         @include margin-tb-rl(0, 0);
-        @include padding-tb-rl(0, 0);
-        @include width-height(100%, 100%);
-        color: rgba(204,255,232,0.85)!important;
+        @include padding-tb-rl(2px, 2px);
+        @include width-height(calc(100% - 4px), calc(100% - 4px));
     }
     #app {
-        display: flex;
-        flex-direction: column;
-        @include margin-tb-rl(0, 0);
-        @include padding-tb-rl(0, 0);
         @include width-height(100%, 100%);
+        background: url("assets/bg.jpg");
+        background-size: 100% 100%;
+        overflow: auto;
         font-family: Calibri;
         text-align: center;
         font-size: 16px;
-        background: url("assets/bg.jpg");
-       background-size: 100% 100%;
+        border-radius: 5px;
+        box-shadow: 0 0 5rem 0 rgba(248,210,69,0.91);
     }
 </style>
