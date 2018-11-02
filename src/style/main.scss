@@ -23,3 +23,4 @@
     @if($tb != null){padding-top: $tb; padding-bottom: $tb;}
     @if($rl != null){padding-right: $rl; padding-left: $rl;}
 }
+@mixin text-ellipse{text-overflow: ellipsis; overflow: hidden; white-space: nowrap;}

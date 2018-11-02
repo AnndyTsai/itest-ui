@@ -210,10 +210,12 @@
         },
         methods : {
             doLogin(){
+
                 this.$refs.loginForm.validate(valid => {
                     if(valid){
 
                     } else {
+                        this.$router.push({name : 'Home'});
                         this.$message({message : '请确认必填信息!', type : 'error'})
                     }
                 })
@@ -239,12 +241,10 @@
             fillCanvas(this.captcha);
         },
         computed : {
-            loginUrl(){
-                return this.$store.getters.LOGIN_URL;
-            },
-            captcha(){
-                return this.$store.getters.CAPTCHA;
-            }
+            //
+            loginUrl(){return this.$store.getters.LOGIN_URL;},
+
+            captcha(){return this.$store.getters.CAPTCHA;},
         }
     };
 </script>
@@ -297,7 +297,7 @@
         }
 
         .register-form{
-            @include width-height(50rem, 35rem);
+            @include width-height(45rem, 30rem);
             @include margin-t-r-b-l(2rem, null, null, null);
             background: rgba(41,235,255,0.3);
             border-radius: 5px;
@@ -326,6 +326,7 @@
                             margin-right: 2rem;
                             a{
                                 font-size: 1.2rem;
+                                color: rgba(160,93,247,0.91);
                             }
                         }
                     }

@@ -7,13 +7,16 @@ import router from './router';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import 'font-awesome/css/font-awesome.min.css';
-import store from './vuex/store'
+import store from './vuex/store';
+import utils from './utils/common';
 
 
 Vue.config.productionTip = false;
 
 Vue.use(ElementUI);
 Vue.use(Vuex);
+
+Vue.prototype.commonUtils = utils;
 
 /* eslint-disable no-new */
 new Vue({
